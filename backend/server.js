@@ -19,9 +19,7 @@ mongoose
   .catch((err) => console.log("DB Error: ", err));
 
 app.use("/api/booking", require("./routes/booking"));
-app.get("/", (req, res) => {
-  res.send("API is working");
-});
+
 
 
 const PORT = process.env.PORT || 5001;

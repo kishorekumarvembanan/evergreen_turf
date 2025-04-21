@@ -1,40 +1,53 @@
 import React, { useState } from "react";
+import axios from "axios"; // Make sure to import axios
 import "../styles/booking.css";
 
 const Booking = () => {
-    const today = new Date().toISOString().split("T")[0];
-    const [form, setForm] = useState({
-      name: "",
-      contact: "",
-      date: today,
-      time: "",
-    });
-    
+  const today = new Date().toISOString().split("T")[0];
+  const [form, setForm] = useState({
+    name: "",
+    contact: "",
+    date: today,
+    time: "", // Initialize time as empty string
+  });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Booking submitted successfully!");
-    console.log("Booking Details:", form);
-    setForm({ name: "", contact: "", date: "", time: "" }); // clear form
+
+    try {
+      const response =await axios.post("http://127.0.0.1:5001/api/booking", {
+        name: form.name,
+        mobile: form.contact, 
+        date: form.date,
+        timeSlot: form.time,
+      });      
+      console.log("Booking response:", response);
+      alert("Booking submitted successfully!");
+      setForm({ name: "", contact: "", date: "", time: "" });
+    } catch (error) {
+      console.error("Error booking slot:", error);
+      alert("Error submitting booking.");
+    }
   };
+
   const timeSlots = [
     "6 AM -7 AM",
     "7 AM -8 AM",
     "5 PM -6 PM",
     "6 PM -7 PM",
     "7 PM -8 PM",
-    
+    "8 PM -9 PM",
     "9 PM -10 PM",
     "10 PM -11 PM",
   ];
-  
-  // simulate booked slots
+
+  // Simulate booked slots
   const bookedSlots = [
-    "8 PM -9 PM",
+    
   ];
 
   return (
@@ -64,20 +77,24 @@ const Booking = () => {
           onChange={handleChange}
           required
         />
-       <div className="time-slot-container">
-  {timeSlots.map((slot) => (
-    <button
-      key={slot}
-      type="button"
-      disabled={bookedSlots.includes(slot)}
-      className={`time-slot ${form.time === slot ? "selected" : ""} ${bookedSlots.includes(slot) ? "booked" : ""}`}
-      onClick={() => setForm({ ...form, time: slot })}
-    >
-      {slot}
-    </button>
-  ))}
-    </div>
-        <button className="submit-button" type="submit">Book Now</button>
+        <div className="time-slot-container">
+          {timeSlots.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              disabled={bookedSlots.includes(slot)}
+              className={`time-slot ${form.time === slot ? "selected" : ""} ${
+                bookedSlots.includes(slot) ? "booked" : ""
+              }`}
+              onClick={() => setForm({ ...form, time: slot })}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
+        <button className="submit-button" type="submit" disabled={!form.time}>
+          Book Now
+        </button>
       </form>
     </div>
   );

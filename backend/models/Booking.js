@@ -1,11 +1,26 @@
-// models/booking.js
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  name: String,
-  contact: String,
-  date: String,
-  time: String,
+  name: {
+    type: String,
+    required: true,
+  },
+  mobile: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  timeSlot: {
+    type: String,
+    required: true,
+  },
+  isBooked: {
+    type: Boolean,
+    default: true,
+  }
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

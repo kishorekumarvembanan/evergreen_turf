@@ -75,3 +75,24 @@
   cursor: not-allowed;
   border-color: #aaa;
 }
+.time-slot {
+  margin: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.time-slot.selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.time-slot.booked {
+  background-color: #f44336;
+  color: white;
+  cursor: not-allowed;
+}
+
+.time-slot:disabled {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
