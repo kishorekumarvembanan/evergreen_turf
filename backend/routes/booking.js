@@ -21,5 +21,17 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+// GET /api/booking/:date - get bookings for a specific date
+router.get("/:date", async (req, res) => {
+  try {
+    const { date } = req.params;
+    const bookings = await Booking.find({ date });
+    const bookedSlots = bookings.map((b) => b.timeSlot);
+    res.json(bookedSlots);
+  } catch (err) {
+    console.error("Fetch booking error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
