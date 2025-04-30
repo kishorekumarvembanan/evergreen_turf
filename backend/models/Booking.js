@@ -13,14 +13,11 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  timeSlot: {
-    type: String,
+  timeSlots: {
+    type: [String],
     required: true,
   },
-  isBooked: {
-    type: Boolean,
-    default: true,
-  }
 });
+
 
 module.exports = mongoose.model("Booking", bookingSchema);

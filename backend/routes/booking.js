@@ -4,34 +4,46 @@ const Booking = require("../models/booking");
 
 router.post("/", async (req, res) => {
   try {
-    const { name, mobile, date, timeSlot } = req.body;
+    const { name, mobile, date, timeSlots } = req.body;
 
-    const existingBooking = await Booking.findOne({ date, timeSlot });
-
-    if (existingBooking) {
-      return res.status(400).json({ message: "This slot is already booked" });
+    if (!Array.isArray(timeSlots) || timeSlots.length === 0) {
+      return res.status(400).json({ message: "No time slots selected" });
     }
 
-    const booking = new Booking({ name, mobile, date, timeSlot });
-    await booking.save();
+    // Check for already booked slots
+    const existingBookings = await Booking.find({ date });
+    const alreadyBooked = existingBookings.flatMap(b => b.timeSlots);
 
-    res.status(201).json({ message: "Slot booked successfully", booking });
+    const overlap = timeSlots.filter(slot => alreadyBooked.includes(slot));
+
+    if (overlap.length > 0) {
+      return res.status(400).json({ message: "Some slots are already booked", alreadyBooked: overlap });
+    }
+
+    const newBooking = new Booking({ name, mobile, date, timeSlots });
+    await newBooking.save();
+
+    res.status(201).json({ message: "Slots booked successfully", newBooking });
   } catch (err) {
     console.error("Booking error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-// GET /api/booking/:date - get bookings for a specific date
+
+// Get all booked slots for a specific date
 router.get("/:date", async (req, res) => {
   try {
     const { date } = req.params;
     const bookings = await Booking.find({ date });
-    const bookedSlots = bookings.map((b) => b.timeSlot);
-    res.json(bookedSlots);
-  } catch (err) {
-    console.error("Fetch booking error:", err);
+
+    const bookedSlots = bookings.flatMap(booking => booking.timeSlots);
+    res.status(200).json(bookedSlots);
+  } catch (error) {
+    console.error("Error fetching booked slots:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
 
 module.exports = router;

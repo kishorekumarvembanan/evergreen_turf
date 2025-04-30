@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-width: 500px;
+  width: 900px;
   margin: auto;
   background-color: #ffffff;
   padding: 2rem;
@@ -25,9 +25,27 @@
   font-size: 1rem;
 }
 
+.booking-form input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.booking-form input[type="date"]:focus {
+  border-color: #3085d6; /* Matches Swal button tone */
+  outline: none;
+}
+
 .booking-form button {
   padding: 12px;
-  background-color: #9eeae8;
+  background-color: #f7e6fa;
   color: #050505;
   font-weight: bold;
   font-size: 1rem;
@@ -38,7 +56,7 @@
 }
 
 .booking-form button:hover {
-  background-color: #256b59;
+  background-color: #70d8be;
 }
 
 .time-slot-container {
@@ -46,53 +64,56 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
-  
 }
 
 .time-slot {
   padding: 10px 20px;
   border: 2px solid #ffffff;
   border-radius: 8px;
-  background-color: rgb(73, 148, 122);      /* ✅ Default = available slot */
+  background-color: rgb(73, 148, 122); /* Default = available slot */
   color: black;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin: 5px;
 }
 
 .time-slot:hover {
-  background-color: #f0f0f0;    /* subtle hover for available slots */
+  background-color: #f0f0f0; /* Subtle hover effect */
 }
 
 .time-slot.selected {
-  background-color: #2e7d67;    /* ✅ Selected = teal */
+  background-color: #2e7d67; /* Selected = teal */
   color: white;
 }
 
 .time-slot.booked {
-  background-color: #cccccc;    /* ✅ Booked = grey */
+  background-color: #cccccc; /* Booked = grey */
   color: #666666;
   cursor: not-allowed;
   border-color: #aaa;
-}
-.time-slot {
-  margin: 5px;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.time-slot.selected {
-  background-color: #4caf50;
-  color: white;
-}
-
-.time-slot.booked {
-  background-color: #f44336;
-  color: white;
-  cursor: not-allowed;
 }
 
 .time-slot:disabled {
   background-color: #d3d3d3;
   cursor: not-allowed;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .booking-form {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .booking-form input,
+  .booking-form select,
+  .booking-form input[type="date"] {
+    font-size: 14px;
+  }
+
+  .time-slot {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
 }

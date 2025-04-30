@@ -10,8 +10,9 @@ const Booking = () => {
     name: "",
     contact: "",
     date: today,
-    time: "", // Initialize time as empty string
+    time: [], // Changed from a single string to an array
   });
+  
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,7 +37,7 @@ useEffect(() => {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // Validate mobile number (basic check: must be 10 digits)
+  // Validate mobile number
   const mobileRegex = /^[6-9]\d{9}$/;
   if (!mobileRegex.test(form.contact)) {
     alert("Please enter a valid 10-digit mobile number starting with 6-9.");
@@ -45,47 +46,50 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.post("http://127.0.0.1:5001/api/booking", {
-      ...form,
-      timeSlot: form.time,
-      mobile: form.contact, // backend expects `mobile`
+      name: form.name,
+      mobile: form.contact,
+      date: form.date,
+      timeSlots: form.time, // Sending an array of time slots
     });
 
-    console.log("Booking response:", response);
     Swal.fire({
       icon: "success",
       title: "Success!",
       text: "Booking submitted successfully!",
       confirmButtonColor: "#3085d6",
     });
-    
-    setForm({ name: "", contact: "", date: form.date, time: "" });
+
+    setForm({ name: "", contact: "", date: form.date, time: [] });
 
     const updated = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
     setBookedSlots(updated.data);
   } catch (error) {
-    console.error("Error booking slot:", error);
+    console.error("Error booking slots:", error);
     Swal.fire({
-      icon: "success",
-      title: "Success!",
-      text: "Booking submitted successfully!",
-      confirmButtonColor: "#3085d6",
+      icon: "error",
+      title: "Error!",
+      text: "Failed to submit booking.",
+      confirmButtonColor: "#d33",
     });
-      }
+  }
 };
 
 
 
-  const timeSlots = [
-    "6 AM -7 AM",
-    "7 AM -8 AM",
-    "8 AM -9 AM",
-    "5 PM -6 PM",
-    "6 PM -7 PM",
-    "7 PM -8 PM",
-    "8 PM -9 PM",
-    "9 PM -10 PM",
-    "10 PM -11 PM",
-  ];
+
+const timeSlots = [
+  "6:00 AM - 6:30 AM", "6:30 AM - 7:00 AM",
+  "7:00 AM - 7:30 AM", "7:30 AM - 8:00 AM",
+  "8:00 AM - 8:30 AM", "8:30 AM - 9:00 AM",
+  "4:30 PM - 5:00 PM", "5:00 PM - 5:30 PM",
+  "5:30 PM - 6:00 PM", "6:00 PM - 6:30 PM",
+  "6:30 PM - 7:00 PM", "7:00 PM - 7:30 PM",
+  "7:30 PM - 8:00 PM", "8:00 PM - 8:30 PM",
+  "8:30 PM - 9:00 PM", "9:00 PM - 9:30 PM",
+  "9:30 PM - 10:00 PM", "10:00 PM - 10:30 PM",
+  "10:30 PM - 11:00 PM"
+];
+
 
   // Simulate booked slots
   
@@ -118,19 +122,28 @@ const handleSubmit = async (e) => {
           required
         />
         <div className="time-slot-container">
-          {timeSlots.map((slot) => (
-            <button
-              key={slot}
-              type="button"
-              disabled={bookedSlots.includes(slot)}
-              className={`time-slot ${form.time === slot ? "selected" : ""} ${
-                bookedSlots.includes(slot) ? "booked" : ""
-              }`}
-              onClick={() => setForm({ ...form, time: slot })}
-            >
-              {slot}
-            </button>
-          ))}
+        {timeSlots.map((slot) => (
+          <button
+            key={slot}
+            type="button"
+            disabled={bookedSlots.includes(slot)}
+            className={`time-slot ${form.time.includes(slot) ? "selected" : ""} ${
+              bookedSlots.includes(slot) ? "booked" : ""
+            }`}
+            onClick={() => {
+              if (form.time.includes(slot)) {
+                // Deselect the slot
+                setForm({ ...form, time: form.time.filter((s) => s !== slot) });
+              } else {
+                // Select the slot
+                setForm({ ...form, time: [...form.time, slot] });
+              }
+            }}
+          >
+            {slot}
+          </button>
+        ))}
+
         </div>
         <button className="submit-button" type="submit" disabled={!form.time}>
           Book Now
