@@ -3,96 +3,139 @@ import axios from "axios"; // Make sure to import axios
 import "../styles/booking.css";
 import Swal from "sweetalert2";
 
-
 const Booking = () => {
   const today = new Date().toISOString().split("T")[0];
   const [form, setForm] = useState({
     name: "",
     contact: "",
     date: today,
-    time: [], // Changed from a single string to an array
+    time: [],
+    paymentOption: "advance",
   });
-  
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const [bookedSlots, setBookedSlots] = useState([]);
+  const fullAmountPerSlot = 500;
+  const advancePerSlot = 50;
 
-useEffect(() => {
-  const fetchBookedSlots = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
-      setBookedSlots(response.data);
-    } catch (error) {
-      console.error("Error fetching booked slots:", error);
+  const calculateAmount = () => {
+    const slots = form.time.length;
+    if (form.paymentOption === "full") {
+      return fullAmountPerSlot * slots;
+    } else {
+      return advancePerSlot * slots;
     }
   };
 
-  fetchBookedSlots();
-}, [form.date]); // runs every time the date changes
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
+        setBookedSlots(response.data);
+      } catch (error) {
+        console.error("Error fetching booked slots:", error);
+      }
+    };
 
+    fetchBookedSlots();
+  }, [form.date]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Validate mobile number
-  const mobileRegex = /^[6-9]\d{9}$/;
-  if (!mobileRegex.test(form.contact)) {
-    alert("Please enter a valid 10-digit mobile number starting with 6-9.");
-    return;
-  }
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(form.contact)) {
+      alert("Please enter a valid 10-digit mobile number starting with 6-9.");
+      return;
+    }
 
-  try {
-    const response = await axios.post("http://127.0.0.1:5001/api/booking", {
-      name: form.name,
-      mobile: form.contact,
-      date: form.date,
-      timeSlots: form.time, // Sending an array of time slots
-    });
+    const numberOfSlots = form.time.length;
+    if (numberOfSlots === 0) {
+      alert("Please select at least one time slot.");
+      return;
+    }
 
-    Swal.fire({
-      icon: "success",
-      title: "Success!",
-      text: "Booking submitted successfully!",
-      confirmButtonColor: "#3085d6",
-    });
+    const amount =
+      form.paymentOption === "advance"
+        ? advancePerSlot * numberOfSlots // convert to paise
+        : fullAmountPerSlot * numberOfSlots ; // in paise
 
-    setForm({ name: "", contact: "", date: form.date, time: [] });
+    try {
+      const orderRes = await axios.post("http://127.0.0.1:5001/api/payment/checkout", {
+        amount,
+      });
+      
+      
+      const { order } = orderRes.data;
+      const { id: orderId, currency } = order;
+      
+      const options = {
+        key: "rzp_test_tXUhiIbyvL0HuO", // replace with your key
+        amount,
+        currency,
+        name: "Evergreen Turf",
+        description: `${form.paymentOption} Booking - ${numberOfSlots} slot(s)`,
+        order_id: orderId,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post("http://127.0.0.1:5001/api/payment/verify", {
+              ...response,
+              formData: form,
+              amountPaid: amount / 100,
+              paymentMode: form.paymentOption,
+            });
 
-    const updated = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
-    setBookedSlots(updated.data);
-  } catch (error) {
-    console.error("Error booking slots:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Error!",
-      text: "Failed to submit booking.",
-      confirmButtonColor: "#d33",
-    });
-  }
-};
+            if (verifyRes.data.success) {
+              Swal.fire("Success!", "Payment & booking successful!", "success");
+              setForm({
+                name: "",
+                contact: "",
+                date: form.date,
+                time: [],
+                paymentOption: "advance",
+              });
+              const updated = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
+              setBookedSlots(updated.data);
+            } else {
+              Swal.fire("Error", "Payment verification failed!", "error");
+            }
+          } catch (err) {
+            console.error("Verification Error:", err);
+            Swal.fire("Error", "Payment failed!", "error");
+          }
+        },
+        prefill: {
+          name: form.name,
+          contact: form.contact,
+        },
+        theme: {
+          color: "#00a86b",
+        },
+      };
 
+      const razor = new window.Razorpay(options);
+      razor.open();
+    } catch (err) {
+      console.error("Payment Init Error:", err);
+      Swal.fire("Error", "Could not initiate payment!", "error");
+    }
+  };
 
-
-
-const timeSlots = [
-  "6:00 AM - 6:30 AM", "6:30 AM - 7:00 AM",
-  "7:00 AM - 7:30 AM", "7:30 AM - 8:00 AM",
-  "8:00 AM - 8:30 AM", "8:30 AM - 9:00 AM",
-  "4:30 PM - 5:00 PM", "5:00 PM - 5:30 PM",
-  "5:30 PM - 6:00 PM", "6:00 PM - 6:30 PM",
-  "6:30 PM - 7:00 PM", "7:00 PM - 7:30 PM",
-  "7:30 PM - 8:00 PM", "8:00 PM - 8:30 PM",
-  "8:30 PM - 9:00 PM", "9:00 PM - 9:30 PM",
-  "9:30 PM - 10:00 PM", "10:00 PM - 10:30 PM",
-  "10:30 PM - 11:00 PM"
-];
-
-
-  // Simulate booked slots
-  
+  const timeSlots = [
+    "6:00 AM - 6:30 AM", "6:30 AM - 7:00 AM",
+    "7:00 AM - 7:30 AM", "7:30 AM - 8:00 AM",
+    "8:00 AM - 8:30 AM", "8:30 AM - 9:00 AM",
+    "4:30 PM - 5:00 PM", "5:00 PM - 5:30 PM",
+    "5:30 PM - 6:00 PM", "6:00 PM - 6:30 PM",
+    "6:30 PM - 7:00 PM", "7:00 PM - 7:30 PM",
+    "7:30 PM - 8:00 PM", "8:00 PM - 8:30 PM",
+    "8:30 PM - 9:00 PM", "9:00 PM - 9:30 PM",
+    "9:30 PM - 10:00 PM", "10:00 PM - 10:30 PM",
+    "10:30 PM - 11:00 PM"
+  ];
 
   return (
     <div className="booking-container">
@@ -122,29 +165,43 @@ const timeSlots = [
           required
         />
         <div className="time-slot-container">
-        {timeSlots.map((slot) => (
-          <button
-            key={slot}
-            type="button"
-            disabled={bookedSlots.includes(slot)}
-            className={`time-slot ${form.time.includes(slot) ? "selected" : ""} ${
-              bookedSlots.includes(slot) ? "booked" : ""
-            }`}
-            onClick={() => {
-              if (form.time.includes(slot)) {
-                // Deselect the slot
-                setForm({ ...form, time: form.time.filter((s) => s !== slot) });
-              } else {
-                // Select the slot
-                setForm({ ...form, time: [...form.time, slot] });
-              }
-            }}
-          >
-            {slot}
-          </button>
-        ))}
-
+          {timeSlots.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              disabled={bookedSlots.includes(slot)}
+              className={`time-slot ${form.time.includes(slot) ? "selected" : ""} ${
+                bookedSlots.includes(slot) ? "booked" : ""
+              }`}
+              onClick={() => {
+                if (form.time.includes(slot)) {
+                  // Deselect the slot
+                  setForm({ ...form, time: form.time.filter((s) => s !== slot) });
+                } else {
+                  // Select the slot
+                  setForm({ ...form, time: [...form.time, slot] });
+                }
+              }}
+            >
+              {slot}
+            </button>
+          ))}
         </div>
+        <select
+          name="paymentOption"
+          value={form.paymentOption}
+          onChange={handleChange}
+          required
+          className="payment-select"
+        >
+          <option value="advance">Pay Advance ₹{advancePerSlot} / slot</option>
+          <option value="full">Pay Full ₹{fullAmountPerSlot} / slot</option>
+        </select>
+
+        <div className="payment-amount">
+          Total to Pay: ₹{calculateAmount()}
+        </div>
+
         <button className="submit-button" type="submit" disabled={!form.time}>
           Book Now
         </button>

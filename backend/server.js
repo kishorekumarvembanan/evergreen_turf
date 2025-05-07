@@ -19,7 +19,7 @@ mongoose
   .catch((err) => console.log("DB Error: ", err));
 
 app.use("/api/booking", require("./routes/booking"));
-
+app.use("/api/payment", require("./routes/payment"));
 
 
 const PORT = process.env.PORT || 5001;

@@ -117,3 +117,14 @@
     font-size: 0.9rem;
   }
 }
+.payment-select {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.payment-amount {
+  margin: 10px 0;
+  font-weight: bold;
+  font-size: 18px;
+}
