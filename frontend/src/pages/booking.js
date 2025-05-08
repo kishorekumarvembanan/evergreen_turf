@@ -3,6 +3,8 @@ import axios from "axios"; // Make sure to import axios
 import "../styles/booking.css";
 import Swal from "sweetalert2";
 
+
+
 const Booking = () => {
   const today = new Date().toISOString().split("T")[0];
   const [form, setForm] = useState({
@@ -161,6 +163,7 @@ const Booking = () => {
           type="date"
           name="date"
           value={form.date}
+          min={today}
           onChange={handleChange}
           required
         />
