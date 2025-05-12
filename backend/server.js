@@ -7,10 +7,13 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  origin: "*",
+const corsOptions = {
+  origin: 'https://your-frontend-url.com',  // Update this with your actual frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
-}));
+};
+
+app.use(cors(corsOptions));
+
 
 
 mongoose
