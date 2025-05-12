@@ -1,4 +1,4 @@
-/* General layout */
+/* General Layout */
 .home-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 2rem;
@@ -38,10 +38,6 @@
   border: 2px solid #fff;
 }
 
-.submit-button {
-  background-color: #2e7d67;
-}
-
 .book-button:hover {
   background-color: #1b5e20;
   color: #fff;
@@ -79,4 +75,40 @@
   height: 300px;
   border-radius: 8px;
   border: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+
+  .hero {
+    padding: 40px 10px;
+  }
+
+  .hero h1 {
+    font-size: 2rem; /* Adjust font size for small screens */
+  }
+
+  .hero p {
+    font-size: 1rem; /* Adjust font size for small screens */
+  }
+
+  .book-button {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+
+  .price, .location {
+    padding: 15px;
+  }
+
+  .price h2, .location h2 {
+    font-size: 1.2rem; /* Adjust header font size */
+  }
+
+  .map-container iframe {
+    height: 200px; /* Reduce iframe height for smaller screens */
+  }
 }

@@ -101,6 +101,7 @@
 @media (max-width: 768px) {
   .booking-form {
     padding: 1rem;
+    margin-left: -15px;
   }
 
   .time-slot-container {
