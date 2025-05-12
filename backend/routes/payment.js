@@ -22,7 +22,7 @@ router.post("/verify", async (req, res) => {
     }
 
     // Save booking if payment is verified
-    const Booking = require("../models/booking");
+    const Booking = require("../models/Booking");
 
     const newBooking = new Booking({
       name: formData.name,
