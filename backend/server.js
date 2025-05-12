@@ -8,11 +8,15 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: 'https://your-frontend-url.com',  // Update this with your actual frontend URL
+  origin: [
+    'http://localhost:3000',
+    'https://evergreenturf.netlify.app'
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
 app.use(cors(corsOptions));
+
 
 
 
@@ -25,5 +29,5 @@ app.use("/api/booking", require("./routes/booking"));
 app.use("/api/payment", require("./routes/payment"));
 
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
