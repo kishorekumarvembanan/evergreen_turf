@@ -3,7 +3,7 @@ import axios from "axios"; // Make sure to import axios
 import "../styles/booking.css";
 import Swal from "sweetalert2";
 
-
+const BASE_URL = 'https://enthusiastic-friendship-production.up.railway.app/api'; // Your live backend URL
 
 const Booking = () => {
   const today = new Date().toISOString().split("T")[0];
@@ -35,7 +35,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchBookedSlots = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
+        const response = await axios.get(`${BASE_URL}/booking/${form.date}`); // Updated API endpoint
         setBookedSlots(response.data);
       } catch (error) {
         console.error("Error fetching booked slots:", error);
@@ -66,14 +66,13 @@ const Booking = () => {
         : fullAmountPerSlot * numberOfSlots ; // in paise
 
     try {
-      const orderRes = await axios.post("http://127.0.0.1:5001/api/payment/checkout", {
+      const orderRes = await axios.post(`${BASE_URL}/payment/checkout`, {
         amount,
       });
-      
-      
+
       const { order } = orderRes.data;
       const { id: orderId, currency } = order;
-      
+
       const options = {
         key: "rzp_test_tXUhiIbyvL0HuO", // replace with your key
         amount,
@@ -83,7 +82,7 @@ const Booking = () => {
         order_id: orderId,
         handler: async function (response) {
           try {
-            const verifyRes = await axios.post("http://127.0.0.1:5001/api/payment/verify", {
+            const verifyRes = await axios.post(`${BASE_URL}/payment/verify`, {
               ...response,
               formData: form,
               amountPaid: amount / 100,
@@ -99,7 +98,7 @@ const Booking = () => {
                 time: [],
                 paymentOption: "advance",
               });
-              const updated = await axios.get(`http://127.0.0.1:5001/api/booking/${form.date}`);
+              const updated = await axios.get(`${BASE_URL}/booking/${form.date}`);
               setBookedSlots(updated.data);
             } else {
               Swal.fire("Error", "Payment verification failed!", "error");
