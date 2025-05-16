@@ -1,0 +1,115 @@
+/* AdminDashboard.css */
+
+.admin-dashboard {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.date-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.date-picker input[type="date"] {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.message {
+  color: #155724;
+  background-color: #d4edda;
+  padding: 10px 14px;
+  border-left: 4px solid #28a745;
+  border-radius: 4px;
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+}
+
+.slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.slot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 160px;
+  transition: transform 0.2s ease;
+}
+
+.slot-item:hover {
+  transform: translateY(-2px);
+}
+
+.slot-item span {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.booked-btn {
+  background-color: #6c757d;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.block-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.block-btn:hover {
+  background-color: #c82333;
+}
+
+.unblock-btn {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.unblock-btn:hover {
+  background-color: #218838;
+}
+
+/* Optional: Smooth responsiveness */
+@media (max-width: 768px) {
+  .slot-item {
+    width: 100%;
+  }
+
+  .slots-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

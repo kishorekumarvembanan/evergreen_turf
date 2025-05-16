@@ -204,7 +204,7 @@ const Booking = () => {
           Total to Pay: ₹{calculateAmount()}
         </div>
 
-        <button className="submit-button" type="submit" disabled={!form.time}>
+        <button className="submit-button" type="submit" disabled={form.time.length === 0}>
           Book Now
         </button>
       </form>
