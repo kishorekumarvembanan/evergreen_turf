@@ -10,7 +10,14 @@ const razorpay = new Razorpay({
 
 router.post("/verify", async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, formData, amountPaid, paymentMode } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      formData,
+      amountPaid,
+      paymentMode,
+    } = req.body;
 
     const generated_signature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -21,14 +28,16 @@ router.post("/verify", async (req, res) => {
       return res.status(400).json({ success: false, message: "Signature verification failed" });
     }
 
-    // Save booking if payment is verified
     const Booking = require("../models/Booking");
 
     const newBooking = new Booking({
       name: formData.name,
-      mobile: formData.contact,
+      contact: formData.contact, // ✅ Correct field
       date: formData.date,
       timeSlots: formData.time,
+      paymentMode, // ✅ optional but useful
+      amountPaid, // ✅ required in schema
+      razorpayPaymentId: razorpay_payment_id, // ✅ required in schema
     });
 
     await newBooking.save();
@@ -40,6 +49,7 @@ router.post("/verify", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error during verification" });
   }
 });
+
 
 router.post("/checkout", async (req, res) => {
   try {
