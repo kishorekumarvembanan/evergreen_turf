@@ -31,18 +31,19 @@ router.post("/", async (req, res) => {
 });
 
 // Get all booked slots for a specific date
+// Get all booking details for a specific date
 router.get("/:date", async (req, res) => {
   try {
     const { date } = req.params;
     const bookings = await Booking.find({ date });
 
-    const bookedSlots = bookings.flatMap(booking => booking.timeSlots);
-    res.status(200).json(bookedSlots);
+    res.status(200).json(bookings); // send full objects
   } catch (error) {
-    console.error("Error fetching booked slots:", error);
+    console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 

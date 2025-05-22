@@ -5,9 +5,11 @@ import "../styles/AdminDashboard.css";
 const BASE_URL = "https://enthusiastic-friendship-production.up.railway.app/api";
 
 const AdminDashboard = () => {
+  // Initialize selectedDate to today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
   const [bookings, setBookings] = useState([]);
   const [blockedSlots, setBlockedSlots] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
   const [message, setMessage] = useState("");
 
   const token = localStorage.getItem("token");
@@ -122,7 +124,7 @@ const AdminDashboard = () => {
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          min={new Date().toISOString().split("T")[0]}
+          min={today}
         />
       </label>
       {message && <div className="message">{message}</div>}
