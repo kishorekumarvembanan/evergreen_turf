@@ -33,17 +33,21 @@ const Booking = () => {
   };
 
   useEffect(() => {
-    const fetchBookedSlots = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/booking/${form.date}`); // Updated API endpoint
-        setBookedSlots(response.data);
-      } catch (error) {
-        console.error("Error fetching booked slots:", error);
-      }
-    };
+  const fetchBookedSlots = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/booking/${form.date}`);
 
-    fetchBookedSlots();
-  }, [form.date]);
+      // Flatten the booked time slots
+      const slots = response.data.flatMap(b => b.timeSlots);
+      setBookedSlots(slots);
+    } catch (error) {
+      console.error("Error fetching booked slots:", error);
+    }
+  };
+
+  fetchBookedSlots();
+}, [form.date]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
