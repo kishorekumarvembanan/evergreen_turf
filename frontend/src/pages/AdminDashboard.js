@@ -5,14 +5,11 @@ import "../styles/AdminDashboard.css";
 const BASE_URL = "https://enthusiastic-friendship-production.up.railway.app/api";
 
 const AdminDashboard = () => {
-  // Initialize selectedDate to today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
   const [selectedDate, setSelectedDate] = useState(today);
   const [bookings, setBookings] = useState([]);
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [message, setMessage] = useState("");
-
-  const token = localStorage.getItem("token");
 
   const slots = [
     "6:00 AM - 6:30 AM",
@@ -42,12 +39,8 @@ const AdminDashboard = () => {
     const fetchBookingsAndBlocked = async () => {
       try {
         const [bookingsRes, blockedRes] = await Promise.all([
-          axios.get(`${BASE_URL}/admin/bookings?date=${selectedDate}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${BASE_URL}/admin/blocked-slots?date=${selectedDate}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axios.get(`${BASE_URL}/admin/bookings?date=${selectedDate}`),
+          axios.get(`${BASE_URL}/admin/blocked-slots?date=${selectedDate}`),
         ]);
         setBookings(bookingsRes.data);
         setBlockedSlots(blockedRes.data);
@@ -59,7 +52,7 @@ const AdminDashboard = () => {
     };
 
     fetchBookingsAndBlocked();
-  }, [selectedDate, token]);
+  }, [selectedDate]);
 
   const isBooked = (slot) => {
     return bookings.some((booking) => booking.timeSlots.includes(slot));
@@ -83,11 +76,7 @@ const AdminDashboard = () => {
       return;
     }
     try {
-      await axios.post(
-        `${BASE_URL}/admin/block-slot`,
-        { date: selectedDate, slot },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.post(`${BASE_URL}/admin/block-slot`, { date: selectedDate, slot });
       setBlockedSlots([...blockedSlots, { date: selectedDate, slot }]);
       setMessage("Slot blocked successfully.");
     } catch (error) {
@@ -102,11 +91,7 @@ const AdminDashboard = () => {
       return;
     }
     try {
-      await axios.post(
-        `${BASE_URL}/admin/unblock-slot`,
-        { date: selectedDate, slot },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.post(`${BASE_URL}/admin/unblock-slot`, { date: selectedDate, slot });
       setBlockedSlots(blockedSlots.filter((b) => b.slot !== slot));
       setMessage("Slot unblocked successfully.");
     } catch (error) {
