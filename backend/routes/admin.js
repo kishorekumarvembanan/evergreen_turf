@@ -18,6 +18,6 @@ router.get("/blocked-slots", getBlockedSlotsByDate);
 router.post("/block-slot", blockSlot);
 
 // Unblock a slot (still protected)
-router.post("/unblock-slot", protect, isAdmin, unblockSlot);
+router.post("/unblock-slot", unblockSlot);
 
 module.exports = router;
