@@ -113,3 +113,106 @@ button {
     align-items: stretch;
   }
 }
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bookings-table thead {
+  background-color: #28a745; /* match your unblock button green */
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.bookings-table th,
+.bookings-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-weight: 500;
+  color: #333;
+}
+
+.bookings-table tbody tr:hover {
+  background-color: #f1f8f3; /* subtle highlight on hover */
+}
+
+.bookings-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive tweaks for small screens */
+@media (max-width: 600px) {
+  .bookings-table,
+  .bookings-table thead,
+  .bookings-table tbody,
+  .bookings-table th,
+  .bookings-table td,
+  .bookings-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .bookings-table thead tr {
+    display: none; /* hide table headers on mobile */
+  }
+
+  .bookings-table tbody tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    background-color: #fff;
+  }
+
+  .bookings-table tbody td {
+    padding-left: 50%;
+    position: relative;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .bookings-table tbody td::before {
+    position: absolute;
+    left: 16px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    content: attr(data-label);
+    color: #28a745;
+  }
+
+  .bookings-table tbody td:last-child {
+    border-bottom: 0;
+  }
+}
+.bookings-table th,
+.bookings-table td {
+  padding: 12px 16px;
+  text-align: center;  /* center content horizontally */
+  vertical-align: middle; /* center content vertically */
+  border: 1px solid #ddd;
+  font-weight: 500;
+  color: #333;
+}
+
+.contact-link {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block; /* ensures it behaves nicely inside td */
+}
+
+
+.contact-link:hover {
+  text-decoration: underline;
+}
+

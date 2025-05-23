@@ -100,9 +100,49 @@ const AdminDashboard = () => {
     }
   };
 
+  // Helper to get time range string from booking timeSlots
+  const getBookingTimeRange = (timeSlots) => {
+    if (!timeSlots.length) return "";
+    const firstStart = timeSlots[0].split(" - ")[0];
+    const lastEnd = timeSlots[timeSlots.length - 1].split(" - ")[1];
+    return `${firstStart} - ${lastEnd}`;
+  };
+
   return (
     <div className="admin-dashboard">
       <h2>Admin Dashboard</h2>
+
+      {bookings.length === 0 ? (
+  <p>No bookings for selected date.</p>
+) : (
+  <table className="bookings-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Contact</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {bookings.map((booking) => (
+        <tr key={booking._id}>
+          <td>{booking.name}</td>
+          <td data-label="Contact">
+            <a href={`tel:${booking.contact}`} className="contact-link">
+              {booking.contact}
+            </a>
+          </td>
+
+          <td>{booking.date}</td>
+          <td>{getBookingTimeRange(booking.timeSlots)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
+
+
       <label>
         Select Date:{" "}
         <input
@@ -112,7 +152,9 @@ const AdminDashboard = () => {
           min={today}
         />
       </label>
+
       {message && <div className="message">{message}</div>}
+
       <div className="slots-grid">
         {slots.map((slot) => (
           <div key={slot} className="slot-item">

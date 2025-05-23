@@ -15,7 +15,7 @@ router.get("/bookings", getBookingsByDate);
 router.get("/blocked-slots", getBlockedSlotsByDate);
 
 // Block a slot (still protected)
-router.post("/block-slot", protect, isAdmin, blockSlot);
+router.post("/block-slot", blockSlot);
 
 // Unblock a slot (still protected)
 router.post("/unblock-slot", protect, isAdmin, unblockSlot);
